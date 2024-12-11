@@ -22,7 +22,7 @@ app.use(express.static("public"));
 app.use(cookieparser());
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "https://ecommerce-frontend-nine-gilt.vercel.app",
     credentials: true,
   })
 );
