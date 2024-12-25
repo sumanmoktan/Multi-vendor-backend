@@ -153,9 +153,14 @@ exports.userDetail = catchAsync(async (req, res, next) => {
 
 exports.Logout = catchAsync(async (req, res, next) => {
   try {
+    // res.cookie("token", null, {
+    //   expries: new Date(Date.now()),
+    //   httpOnly: true,
+    // });
     res.cookie("token", null, {
-      expries: new Date(Date.now()),
+      expires: new Date(Date.now()), // Corrected typo here
       httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // Ensure secure cookies in production
     });
 
     res.status(201).json({
