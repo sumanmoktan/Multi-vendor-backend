@@ -160,7 +160,8 @@ exports.Logout = catchAsync(async (req, res, next) => {
     res.cookie("token", null, {
       expires: new Date(Date.now()), // Corrected typo here
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // Ensure secure cookies in production
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict", // Ensure secure cookies in production
     });
 
     res.status(201).json({
