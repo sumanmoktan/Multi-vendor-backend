@@ -23,7 +23,10 @@ app.use(cookieparser());
 app.use(
   cors({
     // origin: "https://ecommerce-frontend-nine-gilt.vercel.app",
-    origin:"http://localhost:3000",
+    origin: [
+      "http://localhost:3000",
+      "https://ecommerce-frontend-nine-gilt.vercel.app",
+    ],
     credentials: true,
   })
 );
