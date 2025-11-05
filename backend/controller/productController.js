@@ -427,7 +427,7 @@ exports.createProduct = catchAsync(async (req, res, next) => {
     description: req.body.description,
     category: req.body.category,
     tags: req.body.tags,
-    images: req.body.images,
+    images: req.body.images || [],
     originalPrice: req.body.originalPrice,
     discountPrice: req.body.discountPrice,
     stock: req.body.stock,
