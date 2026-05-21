@@ -354,7 +354,7 @@ const multerFilter = (req, file, cb) => {
   } else {
     cb(
       new ErrorHandler("Not an image! Please upload only images.", 400),
-      false
+      false,
     );
   }
 };
@@ -370,6 +370,10 @@ const upload = multer({
 exports.uploadProductImages = upload.fields([{ name: "images", maxCount: 3 }]);
 
 exports.resizeProductImages = catchAsync(async (req, res, next) => {
+  console.log("FILES:", req.files);
+  console.log("BODY:", req.body);
+  console.log("Cloudinary:", process.env.CLOUDINARY_NAME);
+
   if (!req.files || !req.files.images) return next();
 
   req.body.images = [];
@@ -405,7 +409,7 @@ exports.resizeProductImages = catchAsync(async (req, res, next) => {
         console.error("Image processing/upload failed:", error);
         return next(new ErrorHandler("Image processing failed", 500));
       }
-    })
+    }),
   );
 
   next();
@@ -545,10 +549,10 @@ exports.deleteProduct = catchAsync(async (req, res, next) => {
           } catch (err) {
             console.error(
               `Cloudinary deletion failed for ${image.public_id}:`,
-              err
+              err,
             );
           }
-        })
+        }),
       );
     }
 
@@ -605,13 +609,13 @@ exports.createReview = catchAsync(async (req, res, next) => {
   };
 
   const isReviewed = product.reviews.find(
-    (rev) => rev.user._id === req.user._id
+    (rev) => rev.user._id === req.user._id,
   );
 
   if (isReviewed) {
     product.reviews.forEach((rev) => {
       if (rev.user._id === req.user._id) {
-        (rev.rating = rating), (rev.comment = comment), (rev.user = user);
+        ((rev.rating = rating), (rev.comment = comment), (rev.user = user));
       }
     });
   } else {
@@ -631,7 +635,7 @@ exports.createReview = catchAsync(async (req, res, next) => {
   await orderModel.findByIdAndUpdate(
     orderId,
     { $set: { "cart.$[elem].isReviewed": true } },
-    { arrayFilters: [{ "elem._id": productId }], new: true }
+    { arrayFilters: [{ "elem._id": productId }], new: true },
   );
 
   res.status(200).json({
@@ -683,7 +687,7 @@ exports.recommendationsProduct = catchAsync(async (req, res, next) => {
         if (!review.user || !review.user._id) {
           console.warn(
             `  Review ${index} missing 'user' or 'user._id':`,
-            review
+            review,
           );
         } else if (!review.rating) {
           console.warn(`  Review ${index} missing 'rating':`, review);
@@ -726,7 +730,7 @@ exports.recommendationsProduct = catchAsync(async (req, res, next) => {
           const ratingsA = productRatings[productA];
           const ratingsB = productRatings[productB];
           const commonUsers = Object.keys(ratingsA).filter(
-            (user) => ratingsB[user]
+            (user) => ratingsB[user],
           );
 
           if (commonUsers.length === 0) {
@@ -734,13 +738,13 @@ exports.recommendationsProduct = catchAsync(async (req, res, next) => {
           } else {
             const dotProduct = commonUsers.reduce(
               (sum, user) => sum + ratingsA[user] * ratingsB[user],
-              0
+              0,
             );
             const magnitudeA = Math.sqrt(
-              commonUsers.reduce((sum, user) => sum + ratingsA[user] ** 2, 0)
+              commonUsers.reduce((sum, user) => sum + ratingsA[user] ** 2, 0),
             );
             const magnitudeB = Math.sqrt(
-              commonUsers.reduce((sum, user) => sum + ratingsB[user] ** 2, 0)
+              commonUsers.reduce((sum, user) => sum + ratingsB[user] ** 2, 0),
             );
             similarityMatrix[productA][productB] =
               dotProduct / (magnitudeA * magnitudeB);
